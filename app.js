@@ -1,16 +1,40 @@
+var apiKey = "f6c5d7cbd0d5568f87958350a76eb74d";
 
-  var searchBtn = document.querySelector('#searchbtn');
-  searchbtn.addEventListener('click', function(event) {
-      var search = document.querySelector('#searchinput').value;
-      fetch('https://cors-anywhere.herokuapp.com/https://api.openweathermap.org/data/2.5/weather?q='+ search +'&appid=f6c5d7cbd0d5568f87958350a76eb74d&units=imperial') 
+$(document).ready(function () {
+
+    // search for city 
+    $('#getEnteredCityWeather,#past-searches').on('click', function () {
   
-  .then(function(res){
-      return res.json();
-  })
-  .then(function(data){
-      console.log(data);
-      document.querySelector('#searchresults').textContent =data.main.temp;
-  }) 
-});
-
-
+          // user puts location and get's history 
+          
+          let clickEvent = $(event.target)[0];
+          let location = "";
+          if (clickEvent.id === "getEnteredCityWeather") {
+            location = $('#cityEntered').val().trim().toUpperCase();
+          } else if ( clickEvent.className === ("cityList") ) {
+            location = clickEvent.innerText;
+          }
+          if (location == "") return;
+  
+          // update  search
+          updateLocalStorage (location);
+          
+          // weather for searched location, pass location
+          getCurrentWeather(location);
+          
+          // forecast for searched location, pass location
+          getForecastWeather(location);
+         });
+  
+      //  MMM DD, YYYY format
+      function convertDate(UNIXtimestamp) {
+        let convertedDate = "";
+        let a = new Date(UNIXtimestamp * 1000);
+        let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        let year = a.getFullYear();
+        let month = months[a.getMonth()];
+        let date = a.getDate();
+        convertedDate = month + ' ' + date + ', '+ year;
+        return convertedDate;
+      }
+  
