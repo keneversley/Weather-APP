@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv='X-UA-Compatible' content='ie=edge'>
@@ -65,15 +66,229 @@
           </div>
       </div>
       <div class='row'>
-          <!--  forecast Container -->
-          <h5 class='card-title' id="fiveDayHeader">5-Day Forcast</h5>
+        <!--  forecast Container -->
+        <h5 class='card-title' id="fiveDayHeader">5-Day Forcast</h5>
+    </div>
+    <!-- 5 day forecast -->
+    <div class='row' id='forecast'>
+      <div class='card'>
+        <div class='card-body'>
+           
+          <h5 class='card-title' id='1date'>City</h5>
+          <ul>
+             <!-- Weather -->
+            <li><img id='1WeathIcn'></img></li>
+            <li class='card-text' id='1Temp'>1Temp:</li>
+            <li class='card-text' id='1Hum'>Humidity:</li>
+            <li class='card-text' id='1Wind'>Windspeed:</li>
+           
+          </ul>
+        </div>
       </div>
-      <!-- 5 day forecast -->
-      <div class='row' id='forecast'></div>
+
+
+      <div class='card'>
+        <div class='card-body'>
+           
+          <h5 class='card-title' id='2date'>City</h5>
+          <ul>
+             <!-- Weather -->
+            <li><img id='2WeathIcn'></img></li>
+            <li class='card-text' id='2Temp'>Temp:</li>
+            <li class='card-text' id='2Hum'>Humidity:</li>
+            <li class='card-text' id='2Wind'>Windspeed:</li>
+           
+          </ul>
+        </div>
+      </div>
+
+
+ 
+
+
+      <div class='card'>
+        <div class='card-body'>
+           
+          <h5 class='card-title' id='1date'>City</h5>
+          <ul>
+             <!-- Weather -->
+            <li><img id='3WeathIcn'></img></li>
+            <li class='card-text' id='3Temp'>Temp:</li>
+            <li class='card-text' id='3Hum'>Humidity:</li>
+            <li class='card-text' id='3Wind'>Windspeed:</li>
+           
+          </ul>
+        </div>
+      </div>
+
+
+      <div class='card'>
+        <div class='card-body'>
+           
+          <h5 class='card-title' id='1date'>City</h5>
+          <ul>
+             <!-- Weather -->
+            <li><img id='4WeathIcn'></img></li>
+            <li class='card-text' id='4Temp'>Temp:</li>
+            <li class='card-text' id='4Hum'>Humidity:</li>
+            <li class='card-text' id='4Wind'>Windspeed:</li>
+           
+          </ul>
+        </div>
+      </div>
+
+      <div class='card'>
+        <div class='card-body'>
+           
+          <h5 class='card-title' id='1date'>City</h5>
+          <ul>
+             <!-- Weather -->
+            <li><img id='5WeathIcn'></img></li>
+            <li class='card-text' id='5Temp'>Temp:</li>
+            <li class='card-text' id='5Hum'>Humidity:</li>
+            <li class='card-text' id='5Wind'>Windspeed:</li>
+           
+          </ul>
+        </div>
+      </div>
+    </div>
     </div>
   </div>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js' integrity='sha256-H9jAz//QLkDOy/nzE9G4aYijQtkLt9FvGmdUTwBk6gs=' crossorigin='anonymous'></script>
   <script src='app.js'></script>
+  <script>
+    var apiKey = "f6c5d7cbd0d5568f87958350a76eb74d";
+
+$(document).ready(function () {
+
+    // search for city 
+    $('#getEnteredCityWeather,#past-searches').on('click', function (event) {
+  
+          // user puts location and get's history 
+          
+          let clickEvent = $(event.target)[0];
+          console.log(clickEvent)
+          let location = "";
+          if (clickEvent.id === "getEnteredCityWeather" || clickEvent.id === "getWeatherIcon") {
+            location = $('#cityEntered').val().trim().toUpperCase();
+          } else if ( clickEvent.className === ("cityList") ) {
+            location = clickEvent.innerText;
+          }
+          if (location == "") return;
+          console.log(location)
+  
+          // update  search
+          // saving the location to local storage
+          updateLocalStorage (location);
+          
+          // weather for searched location, pass location
+          getCurrentWeather(location);
+          
+          // forecast for searched location, pass location
+          
+         });
+         function updateLocalStorage(location){
+           console.log("Hello")
+           location
+         }
+          function getCurrentWeather(loc){
+            console.log("current")
+            loc
+            let apilink = `https://api.openweathermap.org/data/2.5/weather?q=${loc}&appid=${"f6c5d7cbd0d5568f87958350a76eb74d"}`
+            console.log(apilink)
+
+            fetch(apilink)
+            .then(function(res){
+              return res.json()
+            })
+            .then(function(res){
+            //  console.log(res)
+              getForecastWeather(res.coord.lon, res.coord.lat);
+            })
+          }
+          function getForecastWeather(lat, lon){
+            console.log("forecast")
+         let apilink2 = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`
+         console.log(apilink2)
+         fetch(apilink2)
+         .then(function(res){
+           return res.json()
+         })
+         .then(function(res){
+           console.log("critical")
+           console.log(res)
+          // add all data to html here
+          
+          $('#1Temp').html("Temp: "+ res.daily[0].temp.day + "*F")
+          $('#1Hum').html("Hum: "+ res.daily[0].humidity + "%")
+          $('#1Wind').html("Wind: "+ res.daily[0].wind_speed + "mph")
+
+                   
+          $('#2Temp').html("Temp: "+ res.daily[1].temp.day + "*F")
+          $('#2Hum').html("Hum: "+ res.daily[1].humidity + "%")
+          $('#2Wind').html("Wind: "+ res.daily[1].wind_speed + "mph")
+
+         
+                    
+          $('#3Temp').html("Temp: "+ res.daily[2].temp.day + "*F")
+          $('#3Hum').html("Hum: "+ res.daily[2].temp.day + "%")
+          $('#3Wind').html("Wind: "+ res.daily[2].wind_speed + "mph")
+
+         
+                    
+          $('#4Temp').html("Temp: "+ res.daily[3].temp.day + "*F")
+          $('#4Hum').html("Hum: "+ res.daily[3].humidity + "%")
+          $('#4Wind').html("Wind: "+ res.daily[3].wind_speed + "mph")
+
+         
+                    
+          $('#5Temp').html("Temp: "+ res.daily[4].temp.day + "*F")
+          $('#5Hum').html("Hum: "+ res.daily[4].humidity + "%")
+          $('#5Wind').html("Wind: "+ res.daily[4].wind_speed + "mph")
+
+         
+
+
+
+
+
+          document.querySelector("#currTemp").textContent = "Temp: " + res.current.temp + "*F"
+         
+         
+         
+         
+         
+         
+          let currHum = document.querySelector("#currHum")
+          currHum.textContent ="humidity: " + res.current.humidity + "%"
+          // document.querySelector means tahking infor from html to javascript 
+          let  currWind = document.querySelector("#currWind")
+          currWind.
+       textContent ="wind_speed: " + res.current.wind_speed + "mph" 
+
+       let currUVI = document.querySelector("#currUVI")
+       currUVI.textContent ="uvi: " + res.current.uvi
+
+         })
+          }
+
+
+      //  MMM DD, YYYY format
+      function convertDate(UNIXtimestamp) {
+        let convertedDate = "";
+        let a = new Date(UNIXtimestamp * 1000);
+        let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        let year = a.getFullYear();
+        let month = months[a.getMonth()];
+        let date = a.getDate();
+        convertedDate = month + ' ' + date + ', '+ year;
+        return convertedDate;
+      }
+    })
+
+
+    </script>
+    
 </body>
 </html>
